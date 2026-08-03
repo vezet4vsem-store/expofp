@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExpoFP · Feature usage in the customer cabinet</title>
+<style>
+  :root{
+    --ink:#1e293b; --muted:#64748b; --line:#e2e8f0; --bg:#ffffff; --soft:#f8fafc;
+    --accent:#E11D48; --blue:#1d4ed8; --green:#059669; --amber:#d97706; --red:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#eef2f6;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 64px}
+  header{border-bottom:3px solid var(--accent);padding-bottom:16px;margin-bottom:8px}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;letter-spacing:.02em;color:var(--ink)}
+  .diamond{width:16px;height:16px;background:var(--accent);transform:rotate(45deg);border-radius:3px;display:inline-block}
+  .switch{display:inline-flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff}
+  .switch button{border:0;background:#fff;color:var(--muted);font-size:12px;font-weight:700;padding:6px 14px;cursor:pointer}
+  .switch button.on{background:var(--accent);color:#fff}
+  h1{font-size:26px;margin:14px 0 4px;font-weight:800;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13.5px}
+  h2{font-size:18px;margin:38px 0 6px;font-weight:750;display:flex;align-items:center;gap:9px}
+  h2 .num{background:var(--accent);color:#fff;width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex:none}
+  h3{font-size:14px;margin:20px 0 6px;color:var(--muted);font-weight:650;text-transform:uppercase;letter-spacing:.04em}
+  p{margin:8px 0}
+  .lead{font-size:14.5px;color:#334155}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:14px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin-top:6px}
+  th,td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--line)}
+  th{background:#0f172a;color:#fff;font-weight:600;font-size:12px}
+  th:first-child,td:first-child{text-align:left;font-weight:600}
+  tbody tr:hover{background:#f1f5f9}
+  .cell{color:#0b2447;font-weight:600;border-radius:4px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+  .kpi{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi .v{font-size:24px;font-weight:800;color:var(--accent)}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .bars{margin-top:10px}
+  .barrow{display:grid;grid-template-columns:210px 1fr 54px;align-items:center;gap:10px;margin:7px 0;font-size:13px}
+  .barrow .lab{color:#334155}
+  .track{background:#eef2f6;border-radius:6px;height:20px;position:relative;overflow:hidden}
+  .fill{height:100%;border-radius:6px}
+  .val{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle}
+  .t-up{background:#dcfce7;color:#166534}
+  .t-flat{background:#f1f5f9;color:#475569}
+  ul{margin:8px 0;padding-left:20px}
+  li{margin:6px 0;font-size:13.5px}
+  .callout{border-left:4px solid var(--accent);background:#fff1f4;border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13.5px}
+  .callout.g{border-color:var(--green);background:#ecfdf5}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .seg{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--bg)}
+  .seg .st{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+  .seg h4{margin:3px 0 6px;font-size:15px}
+  .seg p{font-size:12.8px;color:#475569;margin:4px 0}
+  .foot{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+  .note{font-size:12px;color:var(--muted)}
+  .lang-en{display:none}
+  body.en .lang-ru{display:none}
+  body.en .lang-en{display:block}
+  @media(max-width:680px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.barrow{grid-template-columns:150px 1fr 46px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <div class="brand"><span class="diamond"></span> Expo<span style="color:var(--accent)">FP</span> · Product Analytics</div>
+      <div class="switch"><button id="btn-ru" class="on" onclick="setLang('ru')">RU</button><button id="btn-en" onclick="setLang('en')">EN</button></div>
+    </div>
+    <div class="lang-ru">
+      <h1>Использование фич ЛК по сегментам аудитории</h1>
+      <div class="sub">Кто и чем пользуется в личном кабинете · на какой стадии · что понятно, а что недооценено · период 90 дней · источник PostHog (тест-аккаунты исключены)</div>
+    </div>
+    <div class="lang-en">
+      <h1>Customer-cabinet feature usage by audience segment</h1>
+      <div class="sub">Who uses what in the app · at what stage · what's clear vs underused · 90-day window · source PostHog (test accounts excluded)</div>
+    </div>
+  </header>
+
+  <!-- ===================== RU ===================== -->
+  <div class="lang-ru">
+    <p class="lead">Существующий <b>ноутбук</b> измеряет интенсивность (просмотров на пользователя). Здесь добавлены два среза, которых в нём нет и которые дают ответ «что недооценено»: <b>охват блоков в % аккаунтов</b> и <b>связь ранних фич с конверсией триала</b>.</p>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">13.7%</div><div class="l">базовая конверсия Trial → оплата (≈18 ч до решения)</div></div>
+      <div class="kpi"><div class="v">×2.5</div><div class="l">конверсия, если триал открыл Analytics (27% vs 10%)</div></div>
+      <div class="kpi"><div class="v">41%</div><div class="l">триалов вообще заходят в Exhibitors — второй по силе сигнал оплаты</div></div>
+      <div class="kpi"><div class="v">9%</div><div class="l">триалов открывают Analytics — самый недооценённый актив</div></div>
+    </div>
+
+    <h2><span class="num">1</span>Охват блоков — % активных аккаунтов (новое)</h2>
+    <p>Сколько вообще <i>доходит</i> до блока хотя бы раз за 90 дней (в отличие от интенсивности в ноутбуке).</p>
+    <div class="card">
+      <h3 style="margin-top:0">По пакету (package_name)</h3>
+      <table class="hm">
+        <thead><tr><th>Блок</th><th>Trial · 504</th><th>Free · 1080</th><th>Subscription · 875</th><th>Sub+Payments · 176</th></tr></thead>
+        <tbody>
+          <tr><td>Floor plan</td><td data-v="80">80%</td><td data-v="68">68%</td><td data-v="81">81%</td><td data-v="78">78%</td></tr>
+          <tr><td>Exhibitors</td><td data-v="41">41%</td><td data-v="51">51%</td><td data-v="72">72%</td><td data-v="88">88%</td></tr>
+          <tr><td>Sales &amp; Reservations</td><td data-v="20">20%</td><td data-v="27">27%</td><td data-v="45">45%</td><td data-v="61">61%</td></tr>
+          <tr><td>Analytics</td><td data-v="9">9%</td><td data-v="12">12%</td><td data-v="21">21%</td><td data-v="36">36%</td></tr>
+          <tr><td>Sessions</td><td data-v="9">9%</td><td data-v="6">6%</td><td data-v="13">13%</td><td data-v="21">21%</td></tr>
+          <tr><td>Integrations</td><td data-v="15">15%</td><td data-v="14">14%</td><td data-v="22">22%</td><td data-v="23">23%</td></tr>
+        </tbody>
+      </table>
+      <h3>По дизайн-пакету (design_package_name)</h3>
+      <table class="hm">
+        <thead><tr><th>Блок</th><th>DIY · 642</th><th>Standard · 247</th><th>PRO · 223</th></tr></thead>
+        <tbody>
+          <tr><td>Floor plan</td><td data-v="73">73%</td><td data-v="72">72%</td><td data-v="74">74%</td></tr>
+          <tr><td>Exhibitors</td><td data-v="67">67%</td><td data-v="64">64%</td><td data-v="59">59%</td></tr>
+          <tr><td>Sales &amp; Reservations</td><td data-v="45">45%</td><td data-v="45">45%</td><td data-v="33">33%</td></tr>
+          <tr><td>Event settings</td><td data-v="39">39%</td><td data-v="45">45%</td><td data-v="40">40%</td></tr>
+          <tr><td>Analytics</td><td data-v="18">18%</td><td data-v="23">23%</td><td data-v="27">27%</td></tr>
+          <tr><td>Integrations</td><td data-v="16">16%</td><td data-v="18">18%</td><td data-v="25">25%</td></tr>
+          <tr><td>Sessions</td><td data-v="11">11%</td><td data-v="9">9%</td><td data-v="9">9%</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Analytics и Integrations растут по мере «старшинства» тарифа (Analytics: DIY 18% → PRO 27% → Sub+Payments 36%) — их открывают преимущественно <b>после</b> оплаты.</p>
+    </div>
+
+    <h2><span class="num">2</span>Ранние фичи и конверсия триала (новое, ключевое)</h2>
+    <p>Когорта: 534 триала, дозревших ≥14 дней. Конверсия в оплату в зависимости от того, добрался ли пользователь до блока.</p>
+    <div class="card">
+      <div class="bars">
+        <div class="barrow"><span class="lab">Все триалы (база)</span><div class="track"><div class="fill" style="width:26%;background:#94a3b8"></div></div><span class="val">13.7%</span></div>
+        <div class="barrow"><span class="lab">Открыл Designer <span class="tag t-flat">не отличает</span></span><div class="track"><div class="fill" style="width:27%;background:#94a3b8"></div></div><span class="val">14.3%</span></div>
+        <div class="barrow"><span class="lab">Заходил в Exhibitors <span class="tag t-up">×7 vs нет</span></span><div class="track"><div class="fill" style="width:42%;background:var(--blue)"></div></div><span class="val">21.9%</span></div>
+        <div class="barrow"><span class="lab">Открыл Analytics <span class="tag t-up">×2.5 vs нет</span></span><div class="track"><div class="fill" style="width:51%;background:var(--green)"></div></div><span class="val">26.6%</span></div>
+        <div class="barrow"><span class="lab" style="color:var(--muted)">— кто НЕ заходил в Exhibitors</span><div class="track"><div class="fill" style="width:6%;background:#e2a3a3"></div></div><span class="val">~3%</span></div>
+        <div class="barrow"><span class="lab" style="color:var(--muted)">— кто НЕ открывал Analytics</span><div class="track"><div class="fill" style="width:20%;background:#e2a3a3"></div></div><span class="val">10.4%</span></div>
+      </div>
+      <div class="callout"><b>Designer открывают 96% триалов — поэтому он не предсказывает оплату.</b> Платят те, кто дошёл до <b>Exhibitors</b> (22% против ~3%) и особенно до <b>Analytics</b> (27% против 10%). Это и есть настоящие «aha-моменты».</div>
+    </div>
+
+    <h2><span class="num">3</span>Стадии и сегменты — кто как работает</h2>
+    <div class="grid2">
+      <div class="seg"><div class="st">Стадия · исследование</div><h4>Free Trial</h4><p>Floor plan трогают 80%, но Exhibitors только 41%, Analytics — 9%. Активно нажимают «Add booth type» — проверяют гибкость шаблонов.</p><p><b>Разрыв:</b> застревают в Designer и не доходят до фич, которые конвертят.</p></div>
+      <div class="seg"><div class="st">Стадия · ежедневная операционка</div><h4>DIY / Subscription</h4><p>Ядро — Exhibitors (Detail/Edit до 146 просмотров/юзер у DIY) и Reservation log (15 просмотров/юзер). Самостоятельно строят карту (Designer 42/юзер).</p><p><b>Нужны:</b> скорость и надёжность, а не discovery.</p></div>
+      <div class="seg"><div class="st">Стадия · продвинутая настройка</div><h4>Standard / PRO</h4><p>Единственный сегмент с реальным использованием Integrations (PRO 25% охват, External task 11.6 просмотра/юзер). Add Custom CSS, Add search button — продвинутая конфигурация Floor plan.</p><p><b>Кейс онбординга:</b> «Подключи свою CRM».</p></div>
+      <div class="seg"><div class="st">Стадия · профи-операторы</div><h4>Subscription + Payments</h4><p>Самый интенсивный сегмент: Exhibitors ≈290 просмотров/юзер, охват 88%; Sales 61%; Analytics 36%; Sessions 21%. Ежедневная работа в системе.</p><p><b>Нужны:</b> надёжность и массовые операции.</p></div>
+    </div>
+
+    <h2><span class="num">4</span>Что недооценено / плохо находят</h2>
+    <div class="card">
+      <ul>
+        <li><b>Analytics — недооценённый актив №1.</b> Охват: Trial 9% → Subscription 21% → Sub+Payments 36%. Открывают в основном уже после оплаты, но кто нашёл на триале — платит в 2.5 раза чаще. <b>Показывать раньше</b> (можно с демо-данными) — это конверсионный рычаг, а не «фича для крупных».</li>
+        <li><b>Exhibitors в триале.</b> 59% триалов туда не заходят, хотя это второй по силе сигнал оплаты. Прямой шаг онбординга «Добавь первого экспонента».</li>
+        <li><b>Badges, Tags, Import DXF, Discounts.</b> Низкий adoption даже у платящих (Badges 125 уников, Import DXF 21) — похоже на проблему discoverability, а не ненужность.</li>
+        <li><b>Sessions — реально нишевая фича</b> (≤21% охвата даже у топ-сегмента), не для онбординга; Import используют ~25 человек — только «серийные» организаторы.</li>
+      </ul>
+    </div>
+
+    <h2><span class="num">5</span>Что работает и что делать</h2>
+    <div class="callout g"><b>Работает:</b> Exhibitors + Floor plan — ядро продукта для всех сегментов; конверсия Trial→оплата ~10–11% за ~18 часов; 99% триалов открывают ЛК, 96% — Designer (проблемы доступа нет). Event info — первый шаг настройки (709 уников).</div>
+    <ul>
+      <li><b>Онбординг триала перестроить с «нарисуй план» на «добавь экспонента + посмотри аналитику»</b> в первые 24 часа — именно эти шаги коррелируют с оплатой.</li>
+      <li><b>Вытащить Analytics вперёд по воронке</b> — подсветка/подсказка на триале, демо-данные, чтобы страница не была пустой на раннем этапе.</li>
+      <li><b>Standard/PRO:</b> кейс «подключи CRM/интеграцию» — единственный сегмент, который реально пользуется External task.</li>
+      <li><b>Проверить discoverability</b> Badges/Tags/Import DXF/Discounts — низкий охват при доступности для всех.</li>
+    </ul>
+  </div>
+
+  <!-- ===================== EN ===================== -->
+  <div class="lang-en">
+    <p class="lead">The existing <b>notebook</b> measures intensity (pageviews per user). This adds two cuts it lacks, which answer "what's underused": <b>block reach as % of accounts</b> and <b>the link between early feature use and trial conversion</b>.</p>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">13.7%</div><div class="l">baseline Trial → payment conversion (~18h to decide)</div></div>
+      <div class="kpi"><div class="v">×2.5</div><div class="l">conversion if a trial opens Analytics (27% vs 10%)</div></div>
+      <div class="kpi"><div class="v">41%</div><div class="l">of trials ever open Exhibitors — the 2nd strongest paying signal</div></div>
+      <div class="kpi"><div class="v">9%</div><div class="l">of trials open Analytics — the most underused asset</div></div>
+    </div>
+
+    <h2><span class="num">1</span>Block reach — % of active accounts (new)</h2>
+    <p>How many accounts <i>reach</i> a block at least once in 90 days (vs the notebook's per-user intensity).</p>
+    <div class="card">
+      <h3 style="margin-top:0">By package (package_name)</h3>
+      <table class="hm">
+        <thead><tr><th>Block</th><th>Trial · 504</th><th>Free · 1080</th><th>Subscription · 875</th><th>Sub+Payments · 176</th></tr></thead>
+        <tbody>
+          <tr><td>Floor plan</td><td data-v="80">80%</td><td data-v="68">68%</td><td data-v="81">81%</td><td data-v="78">78%</td></tr>
+          <tr><td>Exhibitors</td><td data-v="41">41%</td><td data-v="51">51%</td><td data-v="72">72%</td><td data-v="88">88%</td></tr>
+          <tr><td>Sales &amp; Reservations</td><td data-v="20">20%</td><td data-v="27">27%</td><td data-v="45">45%</td><td data-v="61">61%</td></tr>
+          <tr><td>Analytics</td><td data-v="9">9%</td><td data-v="12">12%</td><td data-v="21">21%</td><td data-v="36">36%</td></tr>
+          <tr><td>Sessions</td><td data-v="9">9%</td><td data-v="6">6%</td><td data-v="13">13%</td><td data-v="21">21%</td></tr>
+          <tr><td>Integrations</td><td data-v="15">15%</td><td data-v="14">14%</td><td data-v="22">22%</td><td data-v="23">23%</td></tr>
+        </tbody>
+      </table>
+      <h3>By design package (design_package_name)</h3>
+      <table class="hm">
+        <thead><tr><th>Block</th><th>DIY · 642</th><th>Standard · 247</th><th>PRO · 223</th></tr></thead>
+        <tbody>
+          <tr><td>Floor plan</td><td data-v="73">73%</td><td data-v="72">72%</td><td data-v="74">74%</td></tr>
+          <tr><td>Exhibitors</td><td data-v="67">67%</td><td data-v="64">64%</td><td data-v="59">59%</td></tr>
+          <tr><td>Sales &amp; Reservations</td><td data-v="45">45%</td><td data-v="45">45%</td><td data-v="33">33%</td></tr>
+          <tr><td>Event settings</td><td data-v="39">39%</td><td data-v="45">45%</td><td data-v="40">40%</td></tr>
+          <tr><td>Analytics</td><td data-v="18">18%</td><td data-v="23">23%</td><td data-v="27">27%</td></tr>
+          <tr><td>Integrations</td><td data-v="16">16%</td><td data-v="18">18%</td><td data-v="25">25%</td></tr>
+          <tr><td>Sessions</td><td data-v="11">11%</td><td data-v="9">9%</td><td data-v="9">9%</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Analytics and Integrations grow with plan tier (Analytics: DIY 18% → PRO 27% → Sub+Payments 36%) — they are opened mostly <b>after</b> payment.</p>
+    </div>
+
+    <h2><span class="num">2</span>Early features and trial conversion (new, key)</h2>
+    <p>Cohort: 534 trials that had ≥14 days to mature. Conversion to payment by whether the user reached a block.</p>
+    <div class="card">
+      <div class="bars">
+        <div class="barrow"><span class="lab">All trials (baseline)</span><div class="track"><div class="fill" style="width:26%;background:#94a3b8"></div></div><span class="val">13.7%</span></div>
+        <div class="barrow"><span class="lab">Opened Designer <span class="tag t-flat">no signal</span></span><div class="track"><div class="fill" style="width:27%;background:#94a3b8"></div></div><span class="val">14.3%</span></div>
+        <div class="barrow"><span class="lab">Visited Exhibitors <span class="tag t-up">×7 vs not</span></span><div class="track"><div class="fill" style="width:42%;background:var(--blue)"></div></div><span class="val">21.9%</span></div>
+        <div class="barrow"><span class="lab">Opened Analytics <span class="tag t-up">×2.5 vs not</span></span><div class="track"><div class="fill" style="width:51%;background:var(--green)"></div></div><span class="val">26.6%</span></div>
+        <div class="barrow"><span class="lab" style="color:var(--muted)">— did NOT visit Exhibitors</span><div class="track"><div class="fill" style="width:6%;background:#e2a3a3"></div></div><span class="val">~3%</span></div>
+        <div class="barrow"><span class="lab" style="color:var(--muted)">— did NOT open Analytics</span><div class="track"><div class="fill" style="width:20%;background:#e2a3a3"></div></div><span class="val">10.4%</span></div>
+      </div>
+      <div class="callout"><b>96% of trials open Designer — so it doesn't predict payment.</b> Payers are those who reach <b>Exhibitors</b> (22% vs ~3%) and especially <b>Analytics</b> (27% vs 10%). These are the real "aha moments".</div>
+    </div>
+
+    <h2><span class="num">3</span>Stages and segments — how each works</h2>
+    <div class="grid2">
+      <div class="seg"><div class="st">Stage · exploration</div><h4>Free Trial</h4><p>80% touch Floor plan, but only 41% reach Exhibitors and 9% Analytics. They actively click "Add booth type" — testing template flexibility.</p><p><b>Gap:</b> they get stuck in Designer and never reach the features that convert.</p></div>
+      <div class="seg"><div class="st">Stage · daily operations</div><h4>DIY / Subscription</h4><p>Core is Exhibitors (Detail/Edit up to 146 views/user for DIY) and Reservation log (15 views/user). They build the map themselves (Designer 42/user).</p><p><b>They need:</b> speed and reliability, not discovery.</p></div>
+      <div class="seg"><div class="st">Stage · advanced setup</div><h4>Standard / PRO</h4><p>The only segment genuinely using Integrations (PRO 25% reach, External task 11.6 views/user). Add Custom CSS, Add search button — advanced Floor plan config.</p><p><b>Onboarding play:</b> "Connect your CRM".</p></div>
+      <div class="seg"><div class="st">Stage · pro operators</div><h4>Subscription + Payments</h4><p>The most intensive segment: Exhibitors ≈290 views/user, 88% reach; Sales 61%; Analytics 36%; Sessions 21%. Daily work in the system.</p><p><b>They need:</b> reliability and bulk operations.</p></div>
+    </div>
+
+    <h2><span class="num">4</span>What's underused / hard to find</h2>
+    <div class="card">
+      <ul>
+        <li><b>Analytics — underused asset #1.</b> Reach: Trial 9% → Subscription 21% → Sub+Payments 36%. Mostly opened after payment, yet trials who find it convert 2.5× more. <b>Surface it earlier</b> (even with demo data) — it's a conversion lever, not an "enterprise-only" feature.</li>
+        <li><b>Exhibitors in trial.</b> 59% of trials never open it, though it's the 2nd strongest paying signal. Add a direct onboarding step "Add your first exhibitor".</li>
+        <li><b>Badges, Tags, Import DXF, Discounts.</b> Low adoption even among payers (Badges 125 users, Import DXF 21) — looks like a discoverability problem, not lack of need.</li>
+        <li><b>Sessions — genuinely niche</b> (≤21% reach even for the top segment), not an onboarding feature; Import is used by ~25 people — only "serial" organizers.</li>
+      </ul>
+    </div>
+
+    <h2><span class="num">5</span>What works and what to do</h2>
+    <div class="callout g"><b>Works:</b> Exhibitors + Floor plan are the product core for every segment; Trial→payment ~10–11% in ~18 hours; 99% of trials open the cabinet, 96% open Designer (no access issue). Event info is the first setup step (709 users).</div>
+    <ul>
+      <li><b>Reshape trial onboarding from "draw the plan" to "add an exhibitor + view analytics"</b> in the first 24h — these are the steps that correlate with payment.</li>
+      <li><b>Pull Analytics forward in the funnel</b> — trial highlight/hint and demo data so the page isn't empty early on.</li>
+      <li><b>Standard/PRO:</b> a "connect a CRM/integration" play — the only segment that truly uses External task.</li>
+      <li><b>Check discoverability</b> of Badges/Tags/Import DXF/Discounts — low reach despite being available to all.</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    <span class="lang-ru">Данные за 90 дней, тест-аккаунты исключены. Метрики на уровне person_id. «Оплатил» = наличие payment_succeeded в окне. Часть click-метрик по $autocapture не досчитана из-за лимитов запросов — корреляция построена на pageview-фичах.<br>Ноутбук: «Анализ ЛК заказчика: кто что использует» (Ub4e) · Дашборд 1936462.</span>
+    <span class="lang-en">90-day window, test accounts excluded. Metrics at person_id level. "Paid" = a payment_succeeded event in the window. Some $autocapture click metrics were not computed due to query limits — the correlation uses pageview features.<br>Notebook: "Customer cabinet usage" (Ub4e) · Dashboard 1936462.</span>
+  </div>
+</div>
+
+<script>
+function setLang(l){
+  document.body.classList.toggle('en', l==='en');
+  document.getElementById('btn-ru').classList.toggle('on', l==='ru');
+  document.getElementById('btn-en').classList.toggle('on', l==='en');
+  document.documentElement.lang = l;
+}
+(function(){
+  function color(v){
+    v=Math.max(0,Math.min(100,v));var t=v/100;
+    var a=[238,244,251],b=[29,78,216];
+    var r=Math.round(a[0]+(b[0]-a[0])*t),g=Math.round(a[1]+(b[1]-a[1])*t),bl=Math.round(a[2]+(b[2]-a[2])*t);
+    return {bg:'rgb('+r+','+g+','+bl+')',fg:t>0.55?'#ffffff':'#0b2447'};
+  }
+  document.querySelectorAll('table.hm td[data-v]').forEach(function(td){
+    var c=color(parseFloat(td.getAttribute('data-v')));
+    td.classList.add('cell');td.style.background=c.bg;td.style.color=c.fg;
+  });
+})();
+</script>
+</body>
+</html>
